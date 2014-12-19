@@ -22,6 +22,10 @@ class _BaseAxis(object):
         self._element = xAx_elm
 
     @property
+    def axisId(self):
+        return self._element.axId.values()[0]
+
+    @property
     def has_major_gridlines(self):
         """
         Read/write boolean value specifying whether this axis has gridlines
