@@ -32,9 +32,9 @@ class Chart(object):
         axis is defined.
         """
         catAx = self._chartSpace.catAx
-        if catAx is None:
+        if catAx == []:
             raise ValueError('chart has no category axis')
-        return CategoryAxis(catAx)
+        return CategoryAxis(catAx[0])
 
     @property
     def chart_style(self):
@@ -135,9 +135,9 @@ class Chart(object):
         axis.
         """
         valAx = self._chartSpace.valAx
-        if valAx is None:
+        if valAx == []:
             raise ValueError('chart has no value axis')
-        return ValueAxis(valAx)
+        return ValueAxis(valAx[0])
 
     @property
     def _workbook(self):

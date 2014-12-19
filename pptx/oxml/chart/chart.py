@@ -10,7 +10,7 @@ from .. import parse_xml
 from ..ns import nsdecls, qn
 from ..simpletypes import ST_Style, XsdString
 from ..xmlchemy import (
-    BaseOxmlElement, OneAndOnlyOne, RequiredAttribute, ZeroOrOne
+    BaseOxmlElement, OneAndOnlyOne, RequiredAttribute, ZeroOrOne, ZeroOrMore
 )
 
 
@@ -30,7 +30,7 @@ class CT_Chart(BaseOxmlElement):
 
     @property
     def catAx(self):
-        return self.plotArea.catAx
+        return self.plotArea.catAx_lst
 
     @property
     def has_legend(self):
@@ -67,7 +67,7 @@ class CT_Chart(BaseOxmlElement):
 
     @property
     def valAx(self):
-        return self.plotArea.valAx
+        return self.plotArea.valAx_lst
 
 
 class CT_ChartSpace(BaseOxmlElement):
@@ -157,8 +157,8 @@ class CT_PlotArea(BaseOxmlElement):
     ``<c:plotArea>`` element.
     """
     # catAx and valAx are actually ZeroOrMore, but don't need list bit yet
-    catAx = ZeroOrOne('c:catAx')
-    valAx = ZeroOrOne('c:valAx')
+    catAx = ZeroOrMore('c:catAx')
+    valAx = ZeroOrMore('c:valAx')
 
     def iter_plots(self):
         """
