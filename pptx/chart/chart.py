@@ -9,7 +9,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from collections import Sequence
 from copy import deepcopy
 
-from .axis import CategoryAxis, ValueAxis
+from .axis import CategoryAxis, ValueAxis, AxisFactory
 from .legend import Legend
 from .plot import PlotFactory, PlotTypeInspector
 from .series import SeriesCollection
@@ -24,6 +24,18 @@ class Chart(object):
         super(Chart, self).__init__()
         self._chartSpace = chartSpace
         self._chart_part = chart_part
+
+    @lazyproperty
+    def axes(self):
+        """
+        The sequence of axes in this chart. Axes are sequenced
+        in the order of primacy, i.e. the first vertical axis is the primary
+        vertical axis and subsequent vertical axes are secondary. Supports
+        *len()*, membership (e.g. ``a in axes``), iteration, slicing, and
+        indexed access (e.g. ``axis = axes[i]``).
+        """
+        plotArea = self._chartSpace.chart.plotArea
+        return _Axes(plotArea, self)
 
     @property
     def category_axis(self):
@@ -162,6 +174,30 @@ class Chart(object):
         for this chart.
         """
         return self._chart_part.chart_workbook
+
+
+class _Axes(Sequence):
+    """
+    The sequence of axes in a chart. The concept is necessary to determine which
+    axes are primary and which are secondary for all but the simplest cases.
+    """
+    def __init__(self, plotArea, chart):
+        super(_Axes, self).__init__()
+        self._plotArea = plotArea
+        self._chart = chart
+
+    def __getitem__(self, index):
+        xAxes = list(self._plotArea.iter_axes())
+        if isinstance(index, slice):
+            axes = [AxisFactory(xAxis, self._chart) for xAxis in xAxes]
+            return axes[index]
+        else:
+            xAxis = xAxes[index]
+            return AxisFactory(xAxis, self._chart)
+
+    def __len__(self):
+        axis_elms = [p for p in self._plotArea.iter_axes()]
+        return len(axis_elms)
 
 
 class _Plots(Sequence):

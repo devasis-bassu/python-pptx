@@ -160,6 +160,20 @@ class CT_PlotArea(BaseOxmlElement):
     catAx = ZeroOrMore('c:catAx')
     valAx = ZeroOrMore('c:valAx')
 
+    def iter_axes(self):
+        """
+        Generate each axis element in the order it appears.
+        """
+        axes_tags = (
+            qn('c:valAx'), qn('c:catAx'), qn('c:serAx')
+        )
+
+        for child in self.iterchildren():
+            if child.tag not in axes_tags:
+                continue
+            yield child
+
+
     def iter_plots(self):
         """
         Generate each xChart child element in the order it appears.

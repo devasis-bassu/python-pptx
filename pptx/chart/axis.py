@@ -343,3 +343,19 @@ class ValueAxis(_BaseAxis):
         if value is None:
             return
         self._element._add_minorUnit(val=value)
+
+def AxisFactory(xChart, chart):
+    """
+    Return an instance of the appropriate subclass of Plot based on the
+    tagname of *plot_elm*.
+    """
+    try:
+        AxisCls = {
+            qn('c:valAx'):    ValueAxis,
+            qn('c:catAx'): CategoryAxis,
+            qn('c:serAx'):   SeriesAxis,
+        }[xChart.tag]
+    except KeyError:
+        raise ValueError('unsupported axis type %s' % xChart.tag)
+
+    return AxisCls(xChart)
