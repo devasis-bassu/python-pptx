@@ -30,6 +30,10 @@ class ImagePart(Part):
         self._filename = filename
 
     @classmethod
+    def load(cls, partname, content_type, blob, package):
+        return cls(partname, content_type, blob, package)
+
+    @classmethod
     def new(cls, package, image):
         """
         Return a new |ImagePart| instance containing *image*, which is an
@@ -41,15 +45,32 @@ class ImagePart(Part):
         )
 
     @property
+    def desc(self):
+        """
+        The filename associated with this image, either the filename of
+        the original image or a generic name of the form ``image.ext``
+        where ``ext`` is appropriate to the image file format, e.g.
+        ``'jpg'``. An image created using a path will have that filename; one
+        created with a file-like object will have a generic name.
+        """
+        # return generic filename if original filename is unknown
+        if self._filename is None:
+            return 'image.%s' % self.ext
+        return self._filename
+
+    @property
     def ext(self):
         """
         Return file extension for this image e.g. ``'png'``.
         """
         return self.partname.ext
 
-    @classmethod
-    def load(cls, partname, content_type, blob, package):
-        return cls(partname, content_type, blob, package)
+    @property
+    def image(self):
+        """
+        An |Image| object containing the image in this image part.
+        """
+        return Image(self.blob, self.desc)
 
     def scale(self, scaled_cx, scaled_cy):
         """
@@ -82,19 +103,6 @@ class ImagePart(Part):
         ``'1be010ea47803b00e140b852765cdf84f491da47'``.
         """
         return hashlib.sha1(self._blob).hexdigest()
-
-    @property
-    def _desc(self):
-        """
-        Return filename associated with this image, either the filename of
-        the original image file the image was created with or a synthetic
-        name of the form ``image.ext`` where ``ext`` is appropriate to the
-        image file format, e.g. ``'jpg'``.
-        """
-        # return generic filename if original filename is unknown
-        if self._filename is None:
-            return 'image.%s' % self.ext
-        return self._filename
 
     @property
     def _dpi(self):
