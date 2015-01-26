@@ -20,6 +20,7 @@ class BaseAxisElement(BaseOxmlElement):
     Base class for catAx, valAx, and perhaps other axis elements.
     """
     axId = OneAndOnlyOne('c:axId')
+    axPos = OneAndOnlyOne('c:axPos')
     scaling = OneAndOnlyOne('c:scaling')
     delete = ZeroOrOne('c:delete', successors=('c:axPos',))
     majorGridlines = ZeroOrOne('c:majorGridlines', successors=(

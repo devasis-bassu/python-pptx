@@ -132,6 +132,14 @@ class _BaseAxis(object):
             return
         self._element._add_minorTickMark(val=value)
 
+    @property
+    def position(self):
+        """
+        Read only.  The position of the axis on the chart.  Left = 'l',
+        Right = 'r', Bottom = 'b', etc.
+        """
+        return self._element.axPos.values()[0]
+
     @lazyproperty
     def tick_labels(self):
         """
