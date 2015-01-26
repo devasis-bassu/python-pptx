@@ -140,6 +140,15 @@ class _BaseAxis(object):
         """
         return self._element.axPos.values()[0]
 
+    @property
+    def orientation(self):
+        """
+        Read only.  The orientation of the axis on the chart.
+        Either returns 'h' or 'v' for horizontal or vertical, respectively.
+        """
+        position = self.position
+        return 'h' if position == 'b' else 'v'
+
     @lazyproperty
     def tick_labels(self):
         """
