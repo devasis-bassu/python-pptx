@@ -20,10 +20,7 @@ class _BaseAxis(object):
     def __init__(self, xAx_elm):
         super(_BaseAxis, self).__init__()
         self._element = xAx_elm
-
-    @property
-    def axisId(self):
-        return self._element.axId.values()[0]
+        self._type = None # Overwritten by child class
 
     @property
     def has_major_gridlines(self):
@@ -62,6 +59,10 @@ class _BaseAxis(object):
             self._element.get_or_add_minorGridlines()
         else:
             self._element._remove_minorGridlines()
+
+    @property
+    def id(self):
+        return self._element.axId.values()[0]
 
     @property
     def major_tick_mark(self):
@@ -159,6 +160,14 @@ class _BaseAxis(object):
         tickLblPos.val = value
 
     @property
+    def type(self):
+        """
+        Read only. Return 'value', 'category', or 'series' according to the axis
+        type.
+        """
+        return self._type
+
+    @property
     def visible(self):
         """
         Read/write. |True| if axis is visible, |False| otherwise.
@@ -182,6 +191,18 @@ class CategoryAxis(_BaseAxis):
     """
     A category axis of a chart.
     """
+    def __init__(self, xAx_elm):
+        super(CategoryAxis, self).__init__(xAx_elm)
+        self._type = 'category'
+
+
+class SeriesAxis(_BaseAxis):
+    """
+    A series axis of a chart.
+    """
+    def __init__(self, xAx_elm):
+        super(SeriesAxis, self).__init__(xAx_elm)
+        self._type = 'series'
 
 
 class TickLabels(object):
@@ -271,6 +292,10 @@ class ValueAxis(_BaseAxis):
     """
     A value axis of a chart.
     """
+    def __init__(self, xAx_elm):
+        super(ValueAxis, self).__init__(xAx_elm)
+        self._type = 'value'
+
     @property
     def major_unit(self):
         """
