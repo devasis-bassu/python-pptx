@@ -17,10 +17,15 @@ class _BaseAxis(object):
     Base class for chart axis objects. All axis objects share these
     properties.
     """
-    def __init__(self, xAx_elm):
+    def __init__(self, xAx_elm, parent):
         super(_BaseAxis, self).__init__()
         self._element = xAx_elm
         self._type = None # Overwritten by child class
+        self._parent = parent
+
+    @property
+    def group(self):
+        return self._parent.axis_group(self)
 
     @property
     def has_major_gridlines(self):
@@ -208,8 +213,8 @@ class CategoryAxis(_BaseAxis):
     """
     A category axis of a chart.
     """
-    def __init__(self, xAx_elm):
-        super(CategoryAxis, self).__init__(xAx_elm)
+    def __init__(self, xAx_elm, parent):
+        super(CategoryAxis, self).__init__(xAx_elm, parent)
         self._type = 'category'
 
 
@@ -217,8 +222,8 @@ class SeriesAxis(_BaseAxis):
     """
     A series axis of a chart.
     """
-    def __init__(self, xAx_elm):
-        super(SeriesAxis, self).__init__(xAx_elm)
+    def __init__(self, xAx_elm, parent):
+        super(SeriesAxis, self).__init__(xAx_elm, parent)
         self._type = 'series'
 
 
@@ -309,8 +314,8 @@ class ValueAxis(_BaseAxis):
     """
     A value axis of a chart.
     """
-    def __init__(self, xAx_elm):
-        super(ValueAxis, self).__init__(xAx_elm)
+    def __init__(self, xAx_elm, parent):
+        super(ValueAxis, self).__init__(xAx_elm, parent)
         self._type = 'value'
 
     @property
@@ -353,7 +358,7 @@ class ValueAxis(_BaseAxis):
             return
         self._element._add_minorUnit(val=value)
 
-def AxisFactory(xChart, chart):
+def AxisFactory(xAxis, chart):
     """
     Return an instance of the appropriate subclass of Plot based on the
     tagname of *plot_elm*.
@@ -363,8 +368,8 @@ def AxisFactory(xChart, chart):
             qn('c:valAx'):    ValueAxis,
             qn('c:catAx'): CategoryAxis,
             qn('c:serAx'):   SeriesAxis,
-        }[xChart.tag]
+        }[xAxis.tag]
     except KeyError:
-        raise ValueError('unsupported axis type %s' % xChart.tag)
+        raise ValueError('unsupported axis type %s' % xAxis.tag)
 
-    return AxisCls(xChart)
+    return AxisCls(xAxis, chart.axes)

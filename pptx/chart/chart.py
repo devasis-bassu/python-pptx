@@ -199,6 +199,13 @@ class _Axes(Sequence):
         axis_elms = [p for p in self._plotArea.iter_axes()]
         return len(axis_elms)
 
+    def axis_group(self, axis):
+        primary = {'h': 'p', 'v': 'p'}
+        for ax in self:
+            if ax.id == axis.id:
+                return primary[ax.orientation]
+            else:
+                primary[ax.orientation] = 's'
 
 class _Plots(Sequence):
     """
