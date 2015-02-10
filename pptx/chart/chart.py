@@ -46,7 +46,7 @@ class Chart(object):
         catAx = self._chartSpace.catAx
         if catAx == []:
             raise ValueError('chart has no category axis')
-        return CategoryAxis(catAx[0])
+        return CategoryAxis(catAx[0], self.axes)
 
     @property
     def category_axes_list(self):
@@ -54,7 +54,7 @@ class Chart(object):
         A list of all category axes of this chart. Returns [] if no category
         axes are defined.
         """
-        return [CategoryAxis(cA) for cA in self._chartSpace.catAx]
+        return [CategoryAxis(cA, self.axes) for cA in self._chartSpace.catAx]
 
     @property
     def chart_style(self):
@@ -157,7 +157,7 @@ class Chart(object):
         valAx = self._chartSpace.valAx
         if valAx == []:
             raise ValueError('chart has no value axis')
-        return ValueAxis(valAx[0])
+        return ValueAxis(valAx[0], self.axes)
 
     @property
     def value_axes_list(self):
@@ -165,7 +165,7 @@ class Chart(object):
         The list of all |ValueAxis| objects for the axes of this chart.
         Returns [] if there are no value axes.
         """
-        return [ValueAxis(vA) for vA in self._chartSpace.valAx]
+        return [ValueAxis(vA, self.axes) for vA in self._chartSpace.valAx]
 
     @property
     def _workbook(self):
