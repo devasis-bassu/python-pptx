@@ -52,7 +52,7 @@ class Describe_BaseAxis(object):
         assert axis._element.xml == expected_xml
 
     def it_raises_on_assign_non_bool_to_visible(self):
-        axis = _BaseAxis(None)
+        axis = _BaseAxis(None, None)
         with pytest.raises(ValueError):
             axis.visible = 'foobar'
 
@@ -115,7 +115,7 @@ class Describe_BaseAxis(object):
     ])
     def major_gridlines_get_fixture(self, request):
         xAx_cxml, expected_value = request.param
-        base_axis = _BaseAxis(element(xAx_cxml))
+        base_axis = _BaseAxis(element(xAx_cxml), None)
         return base_axis, expected_value
 
     @pytest.fixture(params=[
@@ -126,7 +126,7 @@ class Describe_BaseAxis(object):
     ])
     def major_gridlines_set_fixture(self, request):
         xAx_cxml, new_value, expected_xAx_cxml = request.param
-        base_axis = _BaseAxis(element(xAx_cxml))
+        base_axis = _BaseAxis(element(xAx_cxml), None)
         expected_xml = xml(expected_xAx_cxml)
         return base_axis, new_value, expected_xml
 
@@ -137,7 +137,7 @@ class Describe_BaseAxis(object):
     ])
     def major_tick_get_fixture(self, request):
         xAx_cxml, expected_value = request.param
-        axis = _BaseAxis(element(xAx_cxml))
+        axis = _BaseAxis(element(xAx_cxml), None)
         return axis, expected_value
 
     @pytest.fixture(params=[
@@ -152,7 +152,7 @@ class Describe_BaseAxis(object):
     ])
     def major_tick_set_fixture(self, request):
         xAx_cxml, new_value, expected_xAx_cxml = request.param
-        axis = _BaseAxis(element(xAx_cxml))
+        axis = _BaseAxis(element(xAx_cxml), None)
         expected_xml = xml(expected_xAx_cxml)
         return axis, new_value, expected_xml
 
@@ -164,7 +164,7 @@ class Describe_BaseAxis(object):
     ])
     def maximum_scale_get_fixture(self, request):
         xAx_cxml, expected_value = request.param
-        axis = _BaseAxis(element(xAx_cxml))
+        axis = _BaseAxis(element(xAx_cxml), None)
         return axis, expected_value
 
     @pytest.fixture(params=[
@@ -178,7 +178,7 @@ class Describe_BaseAxis(object):
     ])
     def maximum_scale_set_fixture(self, request):
         xAx_cxml, new_value, expected_xAx_cxml = request.param
-        axis = _BaseAxis(element(xAx_cxml))
+        axis = _BaseAxis(element(xAx_cxml), None)
         expected_xml = xml(expected_xAx_cxml)
         return axis, new_value, expected_xml
 
@@ -190,7 +190,7 @@ class Describe_BaseAxis(object):
     ])
     def minimum_scale_get_fixture(self, request):
         xAx_cxml, expected_value = request.param
-        axis = _BaseAxis(element(xAx_cxml))
+        axis = _BaseAxis(element(xAx_cxml), None)
         return axis, expected_value
 
     @pytest.fixture(params=[
@@ -204,7 +204,7 @@ class Describe_BaseAxis(object):
     ])
     def minimum_scale_set_fixture(self, request):
         xAx_cxml, new_value, expected_xAx_cxml = request.param
-        axis = _BaseAxis(element(xAx_cxml))
+        axis = _BaseAxis(element(xAx_cxml), None)
         expected_xml = xml(expected_xAx_cxml)
         return axis, new_value, expected_xml
 
@@ -214,7 +214,7 @@ class Describe_BaseAxis(object):
     ])
     def minor_gridlines_get_fixture(self, request):
         xAx_cxml, expected_value = request.param
-        base_axis = _BaseAxis(element(xAx_cxml))
+        base_axis = _BaseAxis(element(xAx_cxml), None)
         return base_axis, expected_value
 
     @pytest.fixture(params=[
@@ -225,7 +225,7 @@ class Describe_BaseAxis(object):
     ])
     def minor_gridlines_set_fixture(self, request):
         xAx_cxml, new_value, expected_xAx_cxml = request.param
-        base_axis = _BaseAxis(element(xAx_cxml))
+        base_axis = _BaseAxis(element(xAx_cxml), None)
         expected_xml = xml(expected_xAx_cxml)
         return base_axis, new_value, expected_xml
 
@@ -237,7 +237,7 @@ class Describe_BaseAxis(object):
     ])
     def minor_tick_get_fixture(self, request):
         xAx_cxml, expected_value = request.param
-        axis = _BaseAxis(element(xAx_cxml))
+        axis = _BaseAxis(element(xAx_cxml), None)
         return axis, expected_value
 
     @pytest.fixture(params=[
@@ -252,14 +252,14 @@ class Describe_BaseAxis(object):
     ])
     def minor_tick_set_fixture(self, request):
         xAx_cxml, new_value, expected_xAx_cxml = request.param
-        axis = _BaseAxis(element(xAx_cxml))
+        axis = _BaseAxis(element(xAx_cxml), None)
         expected_xml = xml(expected_xAx_cxml)
         return axis, new_value, expected_xml
 
     @pytest.fixture
     def tick_labels_fixture(self, TickLabels_, tick_labels_):
         xAx = element('c:valAx')
-        axis = _BaseAxis(xAx)
+        axis = _BaseAxis(xAx, None)
         return axis, tick_labels_, TickLabels_, xAx
 
     @pytest.fixture(params=[
@@ -270,7 +270,7 @@ class Describe_BaseAxis(object):
     ])
     def tick_lbl_pos_get_fixture(self, request):
         xAx_cxml, expected_value = request.param
-        axis = _BaseAxis(element(xAx_cxml))
+        axis = _BaseAxis(element(xAx_cxml), None)
         return axis, expected_value
 
     @pytest.fixture(params=[
@@ -287,7 +287,7 @@ class Describe_BaseAxis(object):
     ])
     def tick_lbl_pos_set_fixture(self, request):
         xAx_cxml, new_value, expected_xAx_cxml = request.param
-        axis = _BaseAxis(element(xAx_cxml))
+        axis = _BaseAxis(element(xAx_cxml), None)
         expected_xml = xml(expected_xAx_cxml)
         return axis, new_value, expected_xml
 
@@ -305,7 +305,7 @@ class Describe_BaseAxis(object):
     ])
     def visible_get_fixture(self, request):
         xAx_cxml, expected_bool_value = request.param
-        axis = _BaseAxis(element(xAx_cxml))
+        axis = _BaseAxis(element(xAx_cxml), None)
         return axis, expected_bool_value
 
     @pytest.fixture(params=[
@@ -320,7 +320,7 @@ class Describe_BaseAxis(object):
     ])
     def visible_set_fixture(self, request):
         xAx_cxml, new_value, expected_xAx_cxml = request.param
-        axis = _BaseAxis(element(xAx_cxml))
+        axis = _BaseAxis(element(xAx_cxml), None)
         expected_xml = xml(expected_xAx_cxml)
         return axis, new_value, expected_xml
 
@@ -515,7 +515,7 @@ class DescribeValueAxis(object):
     ])
     def major_unit_get_fixture(self, request):
         valAx_cxml, expected_value = request.param
-        value_axis = ValueAxis(element(valAx_cxml))
+        value_axis = ValueAxis(element(valAx_cxml), None)
         return value_axis, expected_value
 
     @pytest.fixture(params=[
@@ -530,7 +530,7 @@ class DescribeValueAxis(object):
     ])
     def major_unit_set_fixture(self, request):
         valAx_cxml, new_value, expected_valAx_cxml = request.param
-        value_axis = ValueAxis(element(valAx_cxml))
+        value_axis = ValueAxis(element(valAx_cxml), None)
         expected_xml = xml(expected_valAx_cxml)
         return value_axis, new_value, expected_xml
 
@@ -540,7 +540,7 @@ class DescribeValueAxis(object):
     ])
     def minor_unit_get_fixture(self, request):
         valAx_cxml, expected_value = request.param
-        value_axis = ValueAxis(element(valAx_cxml))
+        value_axis = ValueAxis(element(valAx_cxml), None)
         return value_axis, expected_value
 
     @pytest.fixture(params=[
@@ -555,6 +555,6 @@ class DescribeValueAxis(object):
     ])
     def minor_unit_set_fixture(self, request):
         valAx_cxml, new_value, expected_valAx_cxml = request.param
-        value_axis = ValueAxis(element(valAx_cxml))
+        value_axis = ValueAxis(element(valAx_cxml), None)
         expected_xml = xml(expected_valAx_cxml)
         return value_axis, new_value, expected_xml
