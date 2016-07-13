@@ -9,7 +9,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from collections import Sequence
 from copy import deepcopy
 
-from .axis import CategoryAxis, ValueAxis
+from .axis import CategoryAxis, ValueAxis, AxisFactory
 from .legend import Legend
 from .plot import PlotFactory, PlotTypeInspector
 from .series import SeriesCollection
@@ -25,16 +25,28 @@ class Chart(object):
         self._chartSpace = chartSpace
         self._chart_part = chart_part
 
+    @lazyproperty
+    def axes(self):
+        """
+        The sequence of axes in this chart. Axes are sequenced
+        in the order of primacy, i.e. the first vertical axis is the primary
+        vertical axis and subsequent vertical axes are secondary. Supports
+        *len()*, membership (e.g. ``a in axes``), iteration, slicing, and
+        indexed access (e.g. ``axis = axes[i]``).
+        """
+        plotArea = self._chartSpace.chart.plotArea
+        return _Axes(plotArea, self)
+
     @property
     def category_axis(self):
         """
-        The category axis of this chart. Raises |ValueError| if no category
-        axis is defined.
+        The first category axis of this chart. Raises |ValueError| if no
+        category axes are defined.
         """
         catAx = self._chartSpace.catAx
         if catAx is None:
             raise ValueError('chart has no category axis')
-        return CategoryAxis(catAx)
+        return CategoryAxis(catAx, self.axes)
 
     @property
     def chart_style(self):
@@ -130,14 +142,14 @@ class Chart(object):
     @property
     def value_axis(self):
         """
-        The |ValueAxis| object providing access to properties of the value
-        axis of this chart. Raises |ValueError| if the chart has no value
-        axis.
+        The |ValueAxis| object providing access to properties of the first
+        value axis of this chart. Raises |ValueError| if the chart has no
+        value axes.
         """
         valAx = self._chartSpace.valAx
         if valAx is None:
             raise ValueError('chart has no value axis')
-        return ValueAxis(valAx)
+        return ValueAxis(valAx, self.axes)
 
     @property
     def _workbook(self):
@@ -147,6 +159,37 @@ class Chart(object):
         """
         return self._chart_part.chart_workbook
 
+
+class _Axes(Sequence):
+    """
+    The sequence of axes in a chart. The concept is necessary to determine which
+    axes are primary and which are secondary for all but the simplest cases.
+    """
+    def __init__(self, plotArea, chart):
+        super(_Axes, self).__init__()
+        self._plotArea = plotArea
+        self._chart = chart
+
+    def __getitem__(self, index):
+        xAxes = list(self._plotArea.iter_axes())
+        if isinstance(index, slice):
+            axes = [AxisFactory(xAxis, self._chart) for xAxis in xAxes]
+            return axes[index]
+        else:
+            xAxis = xAxes[index]
+            return AxisFactory(xAxis, self._chart)
+
+    def __len__(self):
+        axis_elms = [p for p in self._plotArea.iter_axes()]
+        return len(axis_elms)
+
+    def axis_group(self, axis):
+        primary = {'h': 'p', 'v': 'p'}
+        for ax in self:
+            if ax.id == axis.id:
+                return primary[ax.orientation]
+            else:
+                primary[ax.orientation] = 's'
 
 class _Plots(Sequence):
     """

@@ -17,9 +17,15 @@ class _BaseAxis(object):
     Base class for chart axis objects. All axis objects share these
     properties.
     """
-    def __init__(self, xAx_elm):
+    def __init__(self, xAx_elm, parent):
         super(_BaseAxis, self).__init__()
         self._element = xAx_elm
+        self._type = None # Overwritten by child class
+        self._parent = parent
+
+    @property
+    def group(self):
+        return self._parent.axis_group(self)
 
     @property
     def has_major_gridlines(self):
@@ -58,6 +64,10 @@ class _BaseAxis(object):
             self._element.get_or_add_minorGridlines()
         else:
             self._element._remove_minorGridlines()
+
+    @property
+    def id(self):
+        return self._element.axId.values()[0]
 
     @property
     def major_tick_mark(self):
@@ -127,6 +137,23 @@ class _BaseAxis(object):
             return
         self._element._add_minorTickMark(val=value)
 
+    @property
+    def position(self):
+        """
+        Read only.  The position of the axis on the chart.  Left = 'l',
+        Right = 'r', Bottom = 'b', etc.
+        """
+        return self._element.axPos.values()[0]
+
+    @property
+    def orientation(self):
+        """
+        Read only.  The orientation of the axis on the chart.
+        Either returns 'h' or 'v' for horizontal or vertical, respectively.
+        """
+        position = self.position
+        return 'h' if position == 'b' else 'v'
+
     @lazyproperty
     def tick_labels(self):
         """
@@ -155,6 +182,14 @@ class _BaseAxis(object):
         tickLblPos.val = value
 
     @property
+    def type(self):
+        """
+        Read only. Return 'value', 'category', or 'series' according to the axis
+        type.
+        """
+        return self._type
+
+    @property
     def visible(self):
         """
         Read/write. |True| if axis is visible, |False| otherwise.
@@ -178,6 +213,18 @@ class CategoryAxis(_BaseAxis):
     """
     A category axis of a chart.
     """
+    def __init__(self, xAx_elm, parent):
+        super(CategoryAxis, self).__init__(xAx_elm, parent)
+        self._type = 'category'
+
+
+class SeriesAxis(_BaseAxis):
+    """
+    A series axis of a chart.
+    """
+    def __init__(self, xAx_elm, parent):
+        super(SeriesAxis, self).__init__(xAx_elm, parent)
+        self._type = 'series'
 
 
 class TickLabels(object):
@@ -267,6 +314,10 @@ class ValueAxis(_BaseAxis):
     """
     A value axis of a chart.
     """
+    def __init__(self, xAx_elm, parent):
+        super(ValueAxis, self).__init__(xAx_elm, parent)
+        self._type = 'value'
+
     @property
     def major_unit(self):
         """
@@ -306,3 +357,19 @@ class ValueAxis(_BaseAxis):
         if value is None:
             return
         self._element._add_minorUnit(val=value)
+
+def AxisFactory(xAxis, chart):
+    """
+    Return an instance of the appropriate subclass of Plot based on the
+    tagname of *plot_elm*.
+    """
+    try:
+        AxisCls = {
+            qn('c:valAx'):    ValueAxis,
+            qn('c:catAx'): CategoryAxis,
+            qn('c:serAx'):   SeriesAxis,
+        }[xAxis.tag]
+    except KeyError:
+        raise ValueError('unsupported axis type %s' % xAxis.tag)
+
+    return AxisCls(xAxis, chart.axes)

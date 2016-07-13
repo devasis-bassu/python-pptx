@@ -31,7 +31,7 @@ class DescribeChart(object):
     def it_provides_access_to_the_category_axis(self, cat_ax_fixture):
         chart, category_axis_, CategoryAxis_, catAx = cat_ax_fixture
         category_axis = chart.category_axis
-        CategoryAxis_.assert_called_once_with(catAx)
+        CategoryAxis_.assert_called_once_with(catAx, chart.axes)
         assert category_axis is category_axis_
 
     def it_raises_when_no_category_axis(self, cat_ax_raise_fixture):
@@ -42,7 +42,7 @@ class DescribeChart(object):
     def it_provides_access_to_the_value_axis(self, val_ax_fixture):
         chart, value_axis_, ValueAxis_, valAx = val_ax_fixture
         value_axis = chart.value_axis
-        ValueAxis_.assert_called_once_with(valAx)
+        ValueAxis_.assert_called_once_with(valAx, chart.axes)
         assert value_axis is value_axis_
 
     def it_raises_when_no_value_axis(self, val_ax_raise_fixture):
