@@ -47,7 +47,6 @@ User Guide
    user/charts
    user/use-cases
    user/concepts
-   user/enum/index
 
 
 Community Guide
@@ -76,10 +75,12 @@ API Documentation
    api/table
    api/chart
    api/text
+   api/action
    api/dml
    api/image
    api/exc
    api/util
+   api/enum/index
 
 
 Contributor Guide

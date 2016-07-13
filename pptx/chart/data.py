@@ -6,6 +6,8 @@ ChartData and related objects.
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from xml.sax.saxutils import escape
+
 from ..oxml import parse_xml
 from ..oxml.ns import nsdecls
 from .xlsx import WorkbookWriter
@@ -24,13 +26,20 @@ class ChartData(object):
         self._categories = []
         self._series_lst = []
 
-    def add_series(self, name, values):
+    def add_series(self, name, values, number_format=0):
         """
-        Add a series to this data set entitled *name* and the data points
-        specified by *values*, an iterable of numeric values.
+        Add a series to this data set entitled *name* and having the data
+        points specified by *values*, an iterable of numeric values.
+        *num_fmt* specifies how the series values will be displayed, and may
+        be a string, e.g. '#,##0', or an integer in the range 0-22 or 37-49,
+        signifying one of the built-in Excel number formats. The valid
+        integer values and their meaning are documented on the
+        :ref:`ExcelNumFormat` page.
         """
         series_idx = len(self._series_lst)
-        series = _SeriesData(series_idx, name, values, self._categories)
+        series = _SeriesData(
+            series_idx, name, values, self._categories, number_format
+        )
         self._series_lst.append(series)
 
     @property
@@ -88,12 +97,13 @@ class _SeriesData(object):
     specifying a series. In addition, this object also provides XML
     generation for the ``<c:ser>`` element subtree.
     """
-    def __init__(self, series_idx, name, values, categories):
+    def __init__(self, series_idx, name, values, categories, number_format):
         super(_SeriesData, self).__init__()
         self._series_idx = series_idx
         self._name = name
         self._values = values
         self._categories = categories
+        self._number_format = number_format
 
     def __len__(self):
         """
@@ -138,13 +148,23 @@ class _SeriesData(object):
         return self._name
 
     @property
+    def number_format(self):
+        """
+        The Excel number format to be used to display the values in this
+        series. May be a string such as '0.00%' or an integer specifying one
+        of the built-in Excel number formats.
+        """
+        return self._number_format
+
+    @property
     def tx(self):
         """
         Return a ``<c:tx>`` oxml element for this series, containing the
         series name.
         """
+        name = escape(self.name)
         xml = self._tx_tmpl.format(
-            wksht_ref=self._series_name_ref, series_name=self.name,
+            wksht_ref=self._series_name_ref, series_name=name,
             nsdecls=' %s' % nsdecls('c')
         )
         return parse_xml(xml)
@@ -155,9 +175,9 @@ class _SeriesData(object):
         Return the ``<c:tx>`` element for this series as unicode text. This
         element contains the series name.
         """
+        name = escape(self.name)
         return self._tx_tmpl.format(
-            wksht_ref=self._series_name_ref, series_name=self.name,
-            nsdecls=''
+            wksht_ref=self._series_name_ref, series_name=name, nsdecls=''
         )
 
     @property
@@ -209,7 +229,7 @@ class _SeriesData(object):
                 '                <c:pt idx="%d">\n'
                 '                  <c:v>%s</c:v>\n'
                 '                </c:pt>\n'
-            ) % (idx, name)
+            ) % (idx, escape(str(name)))
         return xml
 
     @property

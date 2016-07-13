@@ -17,6 +17,7 @@ can be found here:
    MsoThemeColorIndex
    MsoVerticalAnchor
 
+   PpActionType
    PpParagraphAlignment
    PpPlaceholderType
 
@@ -25,3 +26,5 @@ can be found here:
    XlLegendPosition
    XlTickLabelPosition
    XlTickMark
+
+   ExcelNumFormat
